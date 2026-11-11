@@ -37,6 +37,7 @@
                         ['Contenidos', 'admin.articles.*', route('admin.articles.index'), '📰'],
                         ['Categorías y etiquetas', 'admin.taxonomies', route('admin.taxonomies'), '🏷️'],
                         ['Comunidad', 'admin.posts', route('admin.posts'), '💬'],
+                        ['Usuarios', 'admin.users', route('admin.users'), '💬'],
                     ];
                 @endphp
                 @foreach ($items as [$label, $pattern, $url, $icon])

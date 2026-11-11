@@ -6,6 +6,7 @@ use App\Livewire\Admin\Articles\Index as AdminArticlesIndex;
 use App\Livewire\Admin\Articles\Show as AdminArticlesShow;
 use App\Livewire\Admin\Dashboard as AdminDashboard;
 use App\Livewire\Admin\Posts as AdminPosts;
+use App\Livewire\Admin\Users as AdminUsers;
 use App\Livewire\Admin\Taxonomies as AdminTaxonomies;
 use App\Livewire\Articles\Index as ArticlesIndex;
 use App\Livewire\Articles\Show as ArticlesShow;
@@ -60,6 +61,7 @@ Route::middleware(['auth', EnsureUserIsAdmin::class])
         Route::get('/contenidos/{article}/editar', AdminArticlesForm::class)->name('articles.edit');
         Route::get('/taxonomias', AdminTaxonomies::class)->name('taxonomies');
         Route::get('/comunidad', AdminPosts::class)->name('posts');
+        Route::get('/usuarios', AdminUsers::class)->name('users');
     });
 
 // Autenticados
