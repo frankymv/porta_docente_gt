@@ -186,6 +186,10 @@
             {{-- Portada --}}
             <div class="card space-y-3">
                 <h2 class="font-bold">Portada</h2>
+                <div>
+                    <label class="mb-1 block text-sm font-medium">Formato JPG</label>
+                    <label class="mb-1 block text-sm font-medium">No mayor a 1Mb</label>
+                </div>
 
                 @if ($cover)
                     <img src="{{ $cover->temporaryUrl() }}" alt="Vista previa" class="h-40 w-full rounded-xl object-cover">

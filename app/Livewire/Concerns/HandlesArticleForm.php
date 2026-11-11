@@ -58,6 +58,9 @@ trait HandlesArticleForm
 
     public bool $preview = false;
 
+    /** Tamaño máximo de la portada en KB (1024 KB = 1 MB). Cambia solo este valor. */
+    public const COVER_MAX_KB = 1024;
+
     /** Ruta (nombre) del listado al que se vuelve tras guardar. */
     abstract protected function indexRoute(): string;
 
@@ -120,7 +123,7 @@ trait HandlesArticleForm
             'selectedTags' => ['array'],
             'selectedTags.*' => ['exists:tags,id'],
             'newTags' => ['nullable', 'string', 'max:300'],
-            'cover' => ['nullable', 'image', 'max:2048'],
+            'cover' => ['nullable', 'image', 'max:'.self::COVER_MAX_KB],
         ];
     }
 
@@ -129,10 +132,39 @@ trait HandlesArticleForm
         return [
             'category_id.required' => 'Selecciona una categoría.',
             'publish_at.required_if' => 'Indica la fecha y hora de publicación.',
-            'cover.uploaded' => 'No se pudo subir la imagen. Si pesa más de 2 MB, aumenta upload_max_filesize y post_max_size en php.ini.',
+            'cover.uploaded' => 'No se pudo subir la imagen. Verifica que pese menos de 1 MB y que upload_max_filesize en php.ini lo permita.',
             'cover.image' => 'La portada debe ser una imagen (jpg, png, webp…).',
-            'cover.max' => 'La portada no debe superar 2 MB.',
+            'cover.max' => 'La portada no debe superar 1 MB.',
         ];
+    }
+
+    /**
+     * Livewire arma el error "The cover failed to upload." con la traducción
+     * `validation.uploaded`, no con messages(); aquí la ponemos en español.
+     */
+    protected function registerUploadMessages(): void
+    {
+        $lines = [
+            'validation.uploaded' => 'No se pudo subir la imagen. Verifica que pese menos de '
+                .(self::COVER_MAX_KB / 1024).' MB y que sea JPG, PNG o WebP.',
+        ];
+
+        foreach (array_unique([app()->getLocale(), app()->getFallbackLocale()]) as $locale) {
+            app('translator')->addLines($lines, $locale);
+        }
+    }
+
+    /** Se llama al elegir un archivo nuevo: borra el error del intento anterior. */
+    public function resetCoverError(): void
+    {
+        $this->resetErrorBag('cover');
+        $this->resetValidation('cover');
+    }
+
+    /** Hook de Livewire: justo antes de asignar una nueva subida a $cover. */
+    public function updatingCover(): void
+    {
+        $this->resetCoverError();
     }
 
     public function removeCover(): void
@@ -181,6 +213,13 @@ trait HandlesArticleForm
 
         $article->save();
         $article->tags()->sync($this->resolveTagIds());
+
+        // Diagnóstico: revisa storage/logs/laravel.log si la portada no aparece
+        logger()->info('Contenido guardado', [
+            'id' => $article->id,
+            'cover_recibida' => (bool) $this->cover,
+            'cover_url' => $article->cover_url,
+        ]);
 
         session()->flash('ok', $this->article ? 'Contenido actualizado' : 'Contenido creado');
 
@@ -261,6 +300,7 @@ trait HandlesArticleForm
             'tags' => Tag::orderBy('name')->get(),
             'isEdit' => (bool) $this->article,
             'backUrl' => route($this->indexRoute()),
+            'coverMaxKb' => self::COVER_MAX_KB,
             'canFeature' => $this->isAdminContext(),
             'padded' => ! $this->isAdminContext(),
         ])->title($this->article ? 'Editar contenido' : 'Nuevo contenido');
