@@ -15,7 +15,7 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        // --- Usuarios de ejemplo (contraseña: password) ---
+        /* --- Usuarios de ejemplo (contraseña: password) ---
         $docente = User::create([
             'name' => 'Laura Méndez',
             'email' => 'docente@example.com',
@@ -33,11 +33,13 @@ class DatabaseSeeder extends Seeder
             'institution' => 'Instituto Central',
         ]);
 
+        */
+
         // Administrador (accede a /admin)
         $admin = User::create([
             'name' => 'Administrador',
             'email' => 'admin@example.com',
-            'password' => 'password',
+            'password' => 'Toto.2026',
             'role' => 'administrador',
         ]);
         $admin->forceFill(['is_admin' => true])->save();
@@ -46,10 +48,10 @@ class DatabaseSeeder extends Seeder
         $cats = collect(['Inteligencia Artificial', 'Pedagogía', 'Liderazgo', 'Didáctica', 'Educación y TIC'])
             ->mapWithKeys(fn ($n) => [$n => Category::create(['name' => $n, 'slug' => Str::slug($n)])]);
 
-        $tags = collect(['IA generativa', 'evaluación', 'programación', 'gamificación', 'bienestar docente', 'competencias digitales', 'primaria', 'secundaria'])
+        $tags = collect(['IA', 'evaluación', 'programación', 'gamificación', 'bienestar docente', 'competencias digitales'])
             ->mapWithKeys(fn ($n) => [$n => Tag::create(['name' => $n, 'slug' => Str::slug($n)])]);
 
-        // --- Contenidos de ejemplo (texto original de demostración) ---
+        /*/ --- Contenidos de ejemplo (texto original de demostración) ---
         $items = [
             ['articulo', 'Inteligencia Artificial', 'Seguridad digital para educar en tiempos de IA', 'Claves para que estudiantes y docentes usen herramientas de IA con criterio, privacidad y responsabilidad.', ['IA generativa', 'competencias digitales']],
             //['articulo', 'Pedagogía', 'Cómo aprende la gente: ideas para el aula', 'Un recorrido por hallazgos sobre memoria, transferencia y evaluación formativa que cambian la forma de planear una clase.', ['evaluación', 'secundaria']],
@@ -112,7 +114,11 @@ class DatabaseSeeder extends Seeder
         Comment::create(['post_id' => $p1->id, 'user_id' => $directivo->id, 'body' => 'Nosotros pedimos bitácoras de proceso y una breve sustentación oral. Cambió mucho la conversación.']);
         $p1->likes()->attach($directivo->id);
         $p2->likes()->attach($docente->id);
+
+         */
     }
+
+
 
     private function body(string $title): string
     {
