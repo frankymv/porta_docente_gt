@@ -13,13 +13,10 @@
 
     {{-- Evita el parpadeo del modo oscuro --}}
     <script>
-        (function () {
-            var t = localStorage.getItem('theme');
-            if (t === 'dark' || (!t && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-                document.documentElement.classList.add('dark');
-            }
-        })();
+        document.documentElement.classList.remove('dark');
+        localStorage.removeItem('theme');
     </script>
+
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
